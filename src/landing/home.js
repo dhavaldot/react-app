@@ -13,7 +13,7 @@ class Home extends Component {
         <h1>Heading</h1>
         <div>Home page</div>
         <p>{this.state.name}</p>
-        <p>{this.props.name}</p>
+        {/* <p>{this.props.name}</p> */}
       </div>
     );
   }
