@@ -1,22 +1,24 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "DOT Infotech",
-    };
-  }
-  render() {
-    return (
-      <div>
-        <h1>Heading</h1>
-        <div>Home page</div>
-        <p>{this.state.name}</p>
-        {/* <p>{this.props.name}</p> */}
-      </div>
-    );
-  }
+	userdata = {};
+	constructor() {
+		super();
+		this.userdata = JSON.parse(localStorage.getItem('user'));
+	}
+
+	render() {
+		return (
+			<div>
+				<h1>
+					Hello{' '}
+					{this.userdata.firstname
+						? this.userdata.firstname
+						: this.userdata.email}
+				</h1>
+			</div>
+		);
+	}
 }
 
 export default Home;
