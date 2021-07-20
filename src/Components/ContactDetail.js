@@ -5,10 +5,6 @@ const ContactDetail = (props) => {
 		{ name, email } = contact;
 	return (
 		<div className="main">
-			<br />
-			<br />
-			<br />
-			<br />
 			<div className="ui card centered">
 				<div className="content">
 					<div className="header">{name}</div>
