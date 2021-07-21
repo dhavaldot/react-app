@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
+import { Form, Button } from 'semantic-ui-react';
 
 export default class signup extends Component {
 	constructor() {
 		super();
 
 		this.state = {
-			firstname: '',
-			lastname: '',
 			email: '',
+			phone: '',
 			password: '',
 		};
 
@@ -16,6 +16,7 @@ export default class signup extends Component {
 	}
 
 	handleChange(event) {
+		console.log(`event.target::`, event.target);
 		this.setState({
 			[event.target.name]: event.target.value,
 		});
@@ -23,15 +24,56 @@ export default class signup extends Component {
 
 	singUp = (event) => {
 		localStorage.setItem('user', JSON.stringify(this.state));
-		this.redirect = true;
-		this.props.history.push('/home', this.state);
+		this.props.history.push('/', this.state);
 		event.preventDefault();
 	};
 
 	render() {
 		return (
 			<div>
-				<form onSubmit={this.singUp}>
+				<Form>
+					<Form.Group widths="equal">
+						<Form.Input
+							fluid
+							label="Email"
+							placeholder="Email"
+							onChange={this.handleChange}
+							required
+						/>
+						<Form.Input
+							fluid
+							label="Phone No"
+							placeholder="Mobile No"
+							onChange={this.handleChange}
+							required
+						/>
+					</Form.Group>
+					<Form.Group widths="equal">
+						<Form.Input
+							fluid
+							label="Password"
+							placeholder="Password"
+							onChange={this.handleChange}
+							required
+						/>
+						<Form.Input
+							fluid
+							label="Confirm Password"
+							placeholder="Confirm Password"
+							onChange={this.handleChange}
+							required
+						/>
+					</Form.Group>
+					<Button>Sign Up</Button>
+					<Button
+						onClick={() => {
+							this.props.history.push('/');
+						}}
+					>
+						Sign In ?
+					</Button>
+				</Form>
+				{/* <form onSubmit={this.singUp}>
 					<h3>Sign Up</h3>
 
 					<div className="form-group">
@@ -94,7 +136,7 @@ export default class signup extends Component {
 					<p>
 						Already registered <a href="#">Sign in?</a>
 					</p>
-				</form>
+				</form> */}
 			</div>
 		);
 	}

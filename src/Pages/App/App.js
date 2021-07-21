@@ -7,15 +7,32 @@ import Header from '../../Components/Header/Header';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import apiCall from './apiCall';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
+import LocalKeys from '../../Enums/localStorage';
+import Authorization from '../../handler/Authorization';
+import Login from '../landing/login/login';
+import SignUp from '../landing/signup/signup';
 
+//variable declaration
 let selectedCategory = '';
+
 function App() {
 	const [category, setCatgories] = useState([]);
 	const [items, setitems] = useState([]);
+	const [storeId, setStoreId] = useState([]);
 
 	// const storeId = '60864997457f68439788bacd';
-	const storeId = '6098cc4f1e89fa3f8fccbfa4';
-	console.log('app');
+	useEffect(() => {
+		const storeID = localStorage.getItem(LocalKeys.STORE_ID);
+		if (storeID) setStoreId(storeID);
+	}, []);
+
+	useEffect(() => {
+		localStorage.setItem(LocalKeys.STORE_ID, '6098cc4f1e89fa3f8fccbfa4');
+	}, [storeId]);
+
+	const Auth = Authorization();
+	console.log(`storeId::`, storeId);
+
 	useEffect(() => {
 		const retriveCategories = async () => {
 			let url = `whiteLabel/categories/getCategories?storeId=${storeId}`;
@@ -25,64 +42,67 @@ function App() {
 		};
 
 		retriveCategories();
-	}, []);
+	}, [storeId]);
 
 	const getItemsByCategory = async (categoryId) => {
-		console.log(`condition ::`, selectedCategory === categoryId);
-		console.log(`selectedCategory ::`, selectedCategory);
-		console.log(`categoryId ::`, categoryId);
 		if (selectedCategory === categoryId) return;
 		let url = `whiteLabel/item/getItems?storeId=${storeId}&category=${categoryId}`;
 		let items = await apiCall.getAllCategoryByStoreId(url);
 		let { data } = items;
 		selectedCategory = categoryId;
-		console.log(`selectedCategory assign`, selectedCategory);
 		if (data) setitems(data);
 	};
 
 	return (
 		<div>
-			<Container style={{ margin: 20, width: '100%' }}>
-				<Grid columns={7}>
-					<GridColumn>
-						<Sidebar
-							categories={category}
-							onCategorySelect={getItemsByCategory}
-						/>
-					</GridColumn>
-					<GridColumn>
-						<Router>
-							<Header />
-							<Switch>
-								<Route
-									path="/"
-									exact
-									render={(props) => <ListPage {...props} items={items} />}
-								/>
-							</Switch>
-						</Router>
-					</GridColumn>
-				</Grid>
-			</Container>
+			{Auth ? (
+				<Container style={{ margin: 20, width: '100%' }}>
+					<Grid columns={2}>
+						<GridColumn width={3}>
+							<Sidebar
+								categories={category}
+								onCategorySelect={getItemsByCategory}
+							/>
+						</GridColumn>
+						<GridColumn width={13}>
+							<Router>
+								<Header />
+								<Switch>
+									<Route
+										path="/"
+										exact
+										render={(props) => {
+											Auth ? <ListPage {...props} items={items} /> : <Login />;
+										}}
+									/>
+								</Switch>
+							</Router>
+						</GridColumn>
+					</Grid>
+				</Container>
+			) : (
+				<Container style={{ margin: 20, width: '100%' }}>
+					<Grid columns={1}>
+						<GridColumn width={16}>
+							<Router>
+								<Switch>
+									<Route
+										path="/"
+										exact
+										render={(props) => <Login history={props.history} />}
+									/>
+									<Route
+										path="/signup"
+										exact
+										render={(props) => <SignUp history={props.history} />}
+									/>
+								</Switch>
+							</Router>
+						</GridColumn>
+					</Grid>
+				</Container>
+			)}
 		</div>
-
-		/* <div className="wrapper">
-			<div className="sidebar">
-				<Sidebar categories={category} onCategorySelect={getItemsByCategory} />
-			</div>
-			<div className="content">
-				<Router>
-					<Header />
-					<Switch>
-						<Route
-							path="/"
-							exact
-							render={(props) => <ListPage {...props} items={items} />}
-						/>
-					</Switch>
-				</Router>
-			</div>
-		</div> */
 	);
 }
 
