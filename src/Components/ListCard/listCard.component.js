@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './listCard.css';
 import { GridColumn, Card, Image, Button, Grid } from 'semantic-ui-react';
+import LocalKeys from '../../Enums/localStorage';
+
+const checkCount = (_id) => {
+	let cartItems = JSON.parse(localStorage.getItem(LocalKeys.CART_ITEMS));
+
+	let inCart =
+		cartItems && cartItems.length > 0
+			? cartItems.filter(({ itemId }) => itemId === _id)
+			: [];
+	return inCart && inCart.length > 0 ? inCart[0].quantity : 0;
+};
 
 const ListCard = (props) => {
 	const { _id, price, title, img_url } = props.item;
-	let [itemCount, setItemCount] = useState(0);
+	let [itemCount, setItemCount] = useState(checkCount(_id));
 
-	const orderCount = (condition) => {
-		condition ? setItemCount(++itemCount) : setItemCount(--itemCount);
+	const orderCount = (item, condition) => {
+		let Count = props.addRemoveItems(item, condition);
+		setItemCount(Count);
 	};
 
 	return (
@@ -30,8 +42,7 @@ const ListCard = (props) => {
 								<Button.Group size="small">
 									<Button
 										size="mini"
-										onClick={() => orderCount(false)}
-										// onMouseMove={() => orderCount(false)}
+										onClick={() => orderCount(props.item, false)}
 										disabled={itemCount === 0}
 									>
 										-
@@ -40,8 +51,7 @@ const ListCard = (props) => {
 									<Button
 										size="mini"
 										positive
-										onClick={() => orderCount(true)}
-										// onMouseMove={() => orderCount(true)}
+										onClick={() => orderCount(props.item, true)}
 									>
 										+
 									</Button>

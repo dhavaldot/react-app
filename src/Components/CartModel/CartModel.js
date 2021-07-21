@@ -1,9 +1,31 @@
 import React from 'react';
-import { Modal, Button, Image, Icon } from 'semantic-ui-react';
+import { Modal, Button, Icon, Grid, GridColumn, List } from 'semantic-ui-react';
+import LocalKeys from '../../Enums/localStorage';
 
 const CartModel = () => {
 	const [open, setOpen] = React.useState(false);
 
+	const cartItems = JSON.parse(localStorage.getItem(LocalKeys.CART_ITEMS));
+
+	const renderCartItems =
+		cartItems && cartItems?.length > 0 ? (
+			cartItems.map(({ itemId, title, quantity, price }) => {
+				return (
+					<List.Item key={itemId}>
+						<List.Content>
+							<Grid columns={2}>
+								<GridColumn width={12}>{title}</GridColumn>
+								<GridColumn width={4} key={itemId}>
+									{price} * {quantity} = {Number(price) * quantity}
+								</GridColumn>
+							</Grid>
+						</List.Content>
+					</List.Item>
+				);
+			})
+		) : (
+			<p>No data available</p>
+		);
 	return (
 		<Modal
 			open={open}
@@ -25,19 +47,7 @@ const CartModel = () => {
 			<Modal.Header>Your Cart</Modal.Header>
 			<Modal.Content>
 				<Modal.Description>
-					<p>
-						This is an example of expanded content that will cause the modal's
-						dimmer to scroll.
-					</p>
-
-					<Image
-						src="/images/wireframe/paragraph.png"
-						style={{ marginBottom: 10 }}
-					/>
-					<Image
-						src="/images/wireframe/paragraph.png"
-						style={{ marginBottom: 10 }}
-					/>
+					<List verticalAlign="middle">{renderCartItems}</List>
 				</Modal.Description>
 			</Modal.Content>
 			<Modal.Actions>

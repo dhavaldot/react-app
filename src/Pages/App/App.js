@@ -1,6 +1,5 @@
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { uuid } from 'uuidv4';
 import React, { useState, useEffect } from 'react';
 import ListPage from '../ListPage/listPage';
 import Header from '../../Components/Header/Header';
@@ -14,35 +13,35 @@ import SignUp from '../landing/signup/signup';
 
 //variable declaration
 let selectedCategory = '';
+let storeId = '';
 
 function App() {
 	const [category, setCatgories] = useState([]);
 	const [items, setitems] = useState([]);
-	const [storeId, setStoreId] = useState([]);
+	const [Auth, setAuth] = useState(Authorization());
 
-	// const storeId = '60864997457f68439788bacd';
-	useEffect(() => {
-		const storeID = localStorage.getItem(LocalKeys.STORE_ID);
-		if (storeID) setStoreId(storeID);
-	}, []);
+	const checkAuth = () => {
+		const Authcheck = Authorization();
+		setAuth(Authcheck);
+	};
+
+	useEffect(() => {}, [Auth]);
 
 	useEffect(() => {
 		localStorage.setItem(LocalKeys.STORE_ID, '6098cc4f1e89fa3f8fccbfa4');
-	}, [storeId]);
-
-	const Auth = Authorization();
-	console.log(`storeId::`, storeId);
+	}, []);
 
 	useEffect(() => {
 		const retriveCategories = async () => {
+			storeId = localStorage.getItem(LocalKeys.STORE_ID);
 			let url = `whiteLabel/categories/getCategories?storeId=${storeId}`;
 			let categories = await apiCall.getAllCategoryByStoreId(url);
 			let { data } = categories;
 			if (data) setCatgories(data);
 		};
 
-		retriveCategories();
-	}, [storeId]);
+		if (Auth) retriveCategories();
+	}, [Auth]);
 
 	const getItemsByCategory = async (categoryId) => {
 		if (selectedCategory === categoryId) return;
@@ -71,9 +70,7 @@ function App() {
 									<Route
 										path="/"
 										exact
-										render={(props) => {
-											Auth ? <ListPage {...props} items={items} /> : <Login />;
-										}}
+										render={(props) => <ListPage {...props} items={items} />}
 									/>
 								</Switch>
 							</Router>
@@ -81,7 +78,7 @@ function App() {
 					</Grid>
 				</Container>
 			) : (
-				<Container style={{ margin: 20, width: '100%' }}>
+				<Container>
 					<Grid columns={1}>
 						<GridColumn width={16}>
 							<Router>
@@ -89,7 +86,13 @@ function App() {
 									<Route
 										path="/"
 										exact
-										render={(props) => <Login history={props.history} />}
+										render={(props) => (
+											<Login
+												{...props}
+												checkAuth={checkAuth}
+												history={props.history}
+											/>
+										)}
 									/>
 									<Route
 										path="/signup"

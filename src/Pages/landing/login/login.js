@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Form, Button, Grid, GridColumn } from 'semantic-ui-react';
+import API from './apiCall';
+import LocalKeys from '../../../Enums/localStorage';
 
 class Login extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 
 		this.state = {
-			phone: '',
+			user: '',
 			password: '',
 		};
 
@@ -20,9 +22,25 @@ class Login extends Component {
 		});
 	}
 
-	login = (event) => {
+	login = async (event) => {
 		event.preventDefault();
-		// this.props.history.push('/home');
+		const url = `whiteLabel/users/login`;
+
+		const response = await API.login(url, this.state);
+
+		if (response.status === 200) {
+			const { email, data } = response.data;
+			const user = {
+				email,
+			};
+
+			localStorage.setItem(LocalKeys.USER, JSON.stringify(user));
+			localStorage.setItem(LocalKeys.TOKEN, JSON.stringify(data.token));
+			this.props.checkAuth();
+			this.props.history.push('/');
+		} else {
+			alert(response.data.message);
+		}
 	};
 
 	render() {
@@ -34,7 +52,7 @@ class Login extends Component {
 						<Form.Input
 							fluid
 							label="Mobile No"
-							name="phone"
+							name="user"
 							placeholder="Mobile No"
 							onChange={this.handleChange}
 							width="4"

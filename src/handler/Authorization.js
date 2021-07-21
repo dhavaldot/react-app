@@ -1,4 +1,3 @@
-import React from 'react';
 import LocalKeys from '../Enums/localStorage';
 
 const Authorization = () => {
