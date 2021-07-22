@@ -7,6 +7,7 @@ import Sidebar from '../../Components/Sidebar/Sidebar';
 import apiCall from './apiCall';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
 import LocalKeys from '../../Enums/localStorage';
+import Constants from '../../Enums/constant';
 import Authorization from '../../handler/Authorization';
 import Login from '../landing/login/login';
 import SignUp from '../landing/signup/signup';
@@ -28,7 +29,7 @@ function App() {
 	useEffect(() => {}, [Auth]);
 
 	useEffect(() => {
-		localStorage.setItem(LocalKeys.STORE_ID, '6098cc4f1e89fa3f8fccbfa4');
+		localStorage.setItem(LocalKeys.STORE_ID, Constants.storeId);
 	}, []);
 
 	useEffect(() => {

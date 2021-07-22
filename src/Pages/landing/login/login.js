@@ -27,7 +27,6 @@ class Login extends Component {
 		const url = `whiteLabel/users/login`;
 
 		const response = await API.login(url, this.state);
-
 		if (response.status === 200) {
 			const { email, data } = response.data;
 			const user = {

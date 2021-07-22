@@ -36,7 +36,7 @@ const ListCard = (props) => {
 					<Card.Description>
 						<Grid columns={2} verticalAlign="middle">
 							<GridColumn>
-								<h5>{price}</h5>
+								<h5>₹{price}</h5>
 							</GridColumn>
 							<GridColumn>
 								<Button.Group size="small">

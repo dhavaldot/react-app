@@ -3,7 +3,9 @@ const BASE_URL = 'http://localhost:3000/api/v1';
 
 const login = async (url, payload) => {
 	return axios
-		.post(`${BASE_URL}/${url}`, payload)
+		.post(`${BASE_URL}/${url}`, payload, {
+			withCredentials: true,
+		})
 		.then((response) => {
 			return response;
 		})
