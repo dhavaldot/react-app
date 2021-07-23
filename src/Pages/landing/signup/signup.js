@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'semantic-ui-react';
+import APICall from './apiCall';
 
 export default class signup extends Component {
 	constructor() {
@@ -9,6 +10,7 @@ export default class signup extends Component {
 			email: '',
 			phone: '',
 			password: '',
+			confirmPassword: '',
 		};
 
 		this.handleChange = this.handleChange.bind(this);
@@ -16,15 +18,33 @@ export default class signup extends Component {
 	}
 
 	handleChange(event) {
-		console.log(`event.target::`, event.target);
 		this.setState({
 			[event.target.name]: event.target.value,
 		});
 	}
 
-	singUp = (event) => {
-		localStorage.setItem('user', JSON.stringify(this.state));
-		this.props.history.push('/', this.state);
+	singUp = async (event) => {
+		const { password, confirmPassword, email, phone } = this.state;
+		if (!password || !confirmPassword || !email || !phone)
+			return alert('All field are required!');
+		if (password !== confirmPassword) return alert('Password must be same!');
+
+		const url = 'whiteLabel/users/signup';
+		const response = await APICall.register(url, this.state);
+
+		this.setState({
+			email: '',
+			phone: '',
+			password: '',
+			confirmPassword: '',
+		});
+
+		if (response.status === 200) {
+			const { message } = response.data;
+			alert(message);
+		} else {
+			alert(response.data.message);
+		}
 		event.preventDefault();
 	};
 
@@ -36,6 +56,8 @@ export default class signup extends Component {
 						<Form.Input
 							fluid
 							label="Email"
+							name="email"
+							content={this.state.email}
 							placeholder="Email"
 							onChange={this.handleChange}
 							required
@@ -43,6 +65,8 @@ export default class signup extends Component {
 						<Form.Input
 							fluid
 							label="Phone No"
+							name="phone"
+							content={this.state.phone}
 							placeholder="Mobile No"
 							onChange={this.handleChange}
 							required
@@ -52,6 +76,8 @@ export default class signup extends Component {
 						<Form.Input
 							fluid
 							label="Password"
+							name="password"
+							content={this.state.password}
 							placeholder="Password"
 							onChange={this.handleChange}
 							required
@@ -59,12 +85,16 @@ export default class signup extends Component {
 						<Form.Input
 							fluid
 							label="Confirm Password"
+							name="confirmPassword"
+							content={this.state.confirmPassword}
 							placeholder="Confirm Password"
 							onChange={this.handleChange}
 							required
 						/>
 					</Form.Group>
-					<Button positive>Sign Up</Button>
+					<Button onClick={this.singUp} positive>
+						Sign Up
+					</Button>
 					<Button
 						onClick={() => {
 							this.props.history.push('/');

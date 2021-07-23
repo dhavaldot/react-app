@@ -16,7 +16,7 @@ import SignUp from '../landing/signup/signup';
 let selectedCategory = '';
 let storeId = '';
 
-function App() {
+function App(props) {
 	const [category, setCatgories] = useState([]);
 	const [items, setitems] = useState([]);
 	const [Auth, setAuth] = useState(Authorization());
@@ -60,6 +60,7 @@ function App() {
 					<Grid columns={2}>
 						<GridColumn width={3}>
 							<Sidebar
+								checkAuth={checkAuth}
 								categories={category}
 								onCategorySelect={getItemsByCategory}
 							/>
@@ -98,7 +99,9 @@ function App() {
 									<Route
 										path="/signup"
 										exact
-										render={(props) => <SignUp history={props.history} />}
+										render={(props) => (
+											<SignUp {...props} history={props.history} />
+										)}
 									/>
 								</Switch>
 							</Router>
