@@ -11,6 +11,7 @@ import Constants from '../../Enums/constant';
 import Authorization from '../../handler/Authorization';
 import Login from '../landing/login/login';
 import SignUp from '../landing/signup/signup';
+import QRCode from '../QRcode/qrCode';
 
 //variable declaration
 let selectedCategory = '';
@@ -102,6 +103,11 @@ function App(props) {
 										render={(props) => (
 											<SignUp {...props} history={props.history} />
 										)}
+									/>
+									<Route
+										path="/generate-qr"
+										exact
+										render={(props) => <QRCode {...props} />}
 									/>
 								</Switch>
 							</Router>
